@@ -43,7 +43,6 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-                  with:
           go-version-file: .go-version
           check-latest: true
           cache: true
