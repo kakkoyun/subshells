@@ -14,7 +14,9 @@ ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
 
+COPY --chown=nobody:nogroup ./pkg ./pkg
 COPY --chown=nobody:nogroup ./cmd/subshells/main.go ./cmd/subshells/main.go
+COPY --chown=nobody:nogroup ./cmd/infiniteloop/main.go ./cmd/infiniteloop/main.go
 
 RUN mkdir bin
 RUN go build -trimpath -ldflags='--X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=kakkoyun' -a -o ./bin/subshells ./cmd/subshells/main.go
