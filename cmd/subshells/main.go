@@ -42,12 +42,18 @@ func main() {
 	)
 
 	registry := prometheus.NewRegistry()
+	registry.MustRegister(
+		prometheus.NewBuildInfoCollector(),
+		prometheus.NewGoCollector(),
+		prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}),
+	)
 	healthchecks := healthcheck.NewMetricsHandler(healthcheck.NewHandler(), registry)
 	h := internalserver.NewHandler(
 		internalserver.WithHealthchecks(healthchecks),
 		internalserver.WithPrometheusRegistry(registry),
 		internalserver.WithPProf(),
 	)
+
 	s := http.Server{
 		Addr:    flags.Address,
 		Handler: h,
