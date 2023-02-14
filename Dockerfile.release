@@ -1,0 +1,7 @@
+FROM alpine:3.14
+USER nobody
+
+COPY --chown=0:0 subshells /
+COPY --chown=0:0 infiniteloop /
+
+CMD ["/subshells"]

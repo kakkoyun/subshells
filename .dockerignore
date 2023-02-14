@@ -1,0 +1,15 @@
+*.log
+*_test.go
+.next
+/.github
+/.idea
+/bin
+/tmp
+
+Dockerfile*
+Makefile
+README.md
+coverage
+dist
+out
+testdata/

@@ -1,0 +1,56 @@
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - id: "subshells"
+    main: ./cmd/subshells
+    goos:
+      - linux
+      - windows
+      - darwin
+    flags:
+      - -trimpath
+      - -v
+    ldflags:
+      - main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`
+  - id: "infiniteloop"
+    main: ./cmd/infiniteloop
+    goos:
+      - linux
+      - windows
+      - darwin
+    flags:
+      - -trimpath
+      - -v
+    ldflags:
+      - main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`
+archives:
+  - name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Tag }}-next"
+release:
+  prerelease: auto
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+dockers:
+  - id: subshells
+    goos: linux
+    goarch: amd64
+    dockerfile: Dockerfile.release
+    image_templates:
+    - ghcr.io/kakkoyun/subshells:{{ .Tag }}
