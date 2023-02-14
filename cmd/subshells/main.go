@@ -9,11 +9,12 @@ import (
 
 	"github.com/alecthomas/kong"
 	"github.com/go-kit/log/level"
-	"github.com/kakkoyun/subshells/pkg/logger"
 	"github.com/metalmatze/signal/healthcheck"
 	"github.com/metalmatze/signal/internalserver"
 	"github.com/oklog/run"
 	"github.com/prometheus/client_golang/prometheus"
+
+	"github.com/kakkoyun/subshells/pkg/logger"
 )
 
 var (
@@ -58,7 +59,7 @@ func main() {
 	defer cancel()
 
 	g.Add(func() error {
-		// This is the subshell that runs the command.
+		level.Info(logger).Log("msg", "starting the shell")
 		if err := runShell("./bin/infiniteloop"); err != nil {
 			return err
 		}

@@ -5,9 +5,12 @@ import (
 	"errors"
 	"os"
 
+	"github.com/alecthomas/kong"
+	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
-	"github.com/kakkoyun/subshells/pkg/logger"
 	"github.com/oklog/run"
+
+	"github.com/kakkoyun/subshells/pkg/logger"
 )
 
 var (
@@ -17,9 +20,16 @@ var (
 	builtBy string
 )
 
+type Flags struct {
+	LogLevel string `default:"info" enum:"error,warn,info,debug" help:"log level."`
+}
+
 func main() {
+	flags := &Flags{}
+	_ = kong.Parse(flags)
+
 	var g run.Group
-	logger := logger.NewLogger("debug", logger.LogFormatLogfmt, "infiniteloop")
+	logger := logger.NewLogger(flags.LogLevel, logger.LogFormatLogfmt, "infiniteloop")
 	level.Debug(logger).Log("msg", "subshells initialized",
 		"version", version,
 		"commit", commit,
@@ -35,8 +45,10 @@ func main() {
 		for {
 			select {
 			case <-ctx.Done():
-				level.Info(logger).Log("msg", "context done")
+				level.Debug(logger).Log("msg", "context done")
 				return nil
+			default:
+				iter(ctx, logger)
 			}
 		}
 	}, func(err error) {
@@ -55,4 +67,15 @@ func main() {
 	}
 
 	level.Info(logger).Log("msg", "exited")
+}
+
+//go:noinline
+func iter(ctx context.Context, logger log.Logger) {
+	select {
+	case <-ctx.Done():
+		return
+	default:
+	}
+
+	level.Debug(logger).Log("msg", "looping")
 }

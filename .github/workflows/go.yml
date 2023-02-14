@@ -1,0 +1,66 @@
+name: Go
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  goreleaser:
+    name: Goreleaser Dry
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v2
+
+     - name: Set up Go
+       uses: actions/setup-go@v2
+       with:
+         go-version: 1.20
+
+     - name: Validate
+       uses: goreleaser/goreleaser-action@v2
+       with:
+         distribution: goreleaser
+         version: latest
+         args: check
+
+     - name: Dry Run
+       uses: goreleaser/goreleaser-action@v2
+       with:
+         distribution: goreleaser
+         version: latest
+         args: release --rm-dist --skip-validate --skip-publish
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.20
+
+      - name: Format
+        run: make format
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.51
+
+      - name: Test
+        run: make test
+
+      - name: Build
+        run: make build
+
+      - name: Archive generatated artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: bin
+          if-no-files-found: error
+          path: |
+            bin

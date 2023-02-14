@@ -1,12 +1,13 @@
+project_name: subshells
 before:
   hooks:
     - go mod tidy
 builds:
   - id: "subshells"
     main: ./cmd/subshells
+    binary: subshells
     goos:
       - linux
-      - windows
       - darwin
     flags:
       - -trimpath
@@ -15,9 +16,9 @@ builds:
       - main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`
   - id: "infiniteloop"
     main: ./cmd/infiniteloop
+    binary: "infiniteloop"
     goos:
       - linux
-      - windows
       - darwin
     flags:
       - -trimpath

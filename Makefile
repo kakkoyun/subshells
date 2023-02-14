@@ -6,13 +6,13 @@ LDFLAGS="-X main.version=$(VERSION)"
 .PHONY: build
 build: bin/subshells bin/infiniteloop
 
-bin/subshells: deps main.go
+bin/subshells: deps cmd/subshells/main.go
 	mkdir -p bin
-	go build -a -ldflags=$(LDFLAGS) -o $@ .
+	go build -a -ldflags=$(LDFLAGS) -o $@ cmd/subshells/main.go
 
-bin/infiniteloop: deps main.go
+bin/infiniteloop: deps cmd/infiniteloop/main.go
 	mkdir -p bin
-	go build -a -ldflags=$(LDFLAGS) -o $@ .
+	go build -a -ldflags=$(LDFLAGS) -o $@ cmd/infiniteloop/main.go
 
 .PHONY: clean
 clean:
@@ -36,3 +36,7 @@ container: build
 .PHONY: push-container
 push-container:
 	docker push $(CONTAINER_IMAGE)
+
+.PHONY: release-dry-run
+release-dry-run:
+	goreleaser release --rm-dist --auto-snapshot --skip-validate --skip-publish --debug --skip-sign

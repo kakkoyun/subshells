@@ -1,4 +1,4 @@
-FROM golang:1.17 as builder
+FROM golang:1.20-alpine3.17 as builder
 RUN mkdir /.cache && chown nobody:nogroup /.cache && touch -t 202101010000.00 /.cache
 
 ARG VERSION
@@ -17,10 +17,10 @@ ENV GOARCH=amd64
 COPY --chown=nobody:nogroup ./cmd/subshells/main.go ./cmd/subshells/main.go
 
 RUN mkdir bin
-RUN go build -trimpath -ldflags='--X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=kakkoyun' -a -o ./bin/subshells .
-RUN go build -trimpath -ldflags='--X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=kakkoyun' -a -o ./bin/infiniteloop .
+RUN go build -trimpath -ldflags='--X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=kakkoyun' -a -o ./bin/subshells ./cmd/subshells/main.go
+RUN go build -trimpath -ldflags='--X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=kakkoyun' -a -o ./bin/infiniteloop ./cmd/infiniteloop/main.go
 
-FROM alpine:3.14
+FROM alpine:3.17
 
 USER nobody
 
