@@ -34,7 +34,7 @@ container: build
 	docker build -t $(CONTAINER_IMAGE) --build-arg VERSION=$(VERSION) .
 
 .PHONY: push-container
-push-container:
+push-container: container
 	docker push $(CONTAINER_IMAGE)
 
 .PHONY: release-dry-run
