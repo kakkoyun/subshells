@@ -44,7 +44,7 @@ push-container: container
 
 .PHONY: release-dry-run
 release-dry-run:
-	goreleaser release --rm-dist --auto-snapshot --skip-validate --skip-publish --debug --skip-sign
+	goreleaser release --clean --auto-snapshot --skip-validate --skip-publish --debug --skip-sign
 
 .PHONY: dev/up
 dev/up:

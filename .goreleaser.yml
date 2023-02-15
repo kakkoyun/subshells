@@ -37,9 +37,14 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ incpatch .Tag }}-next"
+  name_template: "{{ incpatch .Tag }}-{{ .ShortCommit }}"
 release:
   prerelease: auto
+  # Defaults to empty.
+  footer: |
+    ## Docker images
+
+    `docker pull ghcr.io/kakkoyun/subshells:{{ .Tag }}`
 changelog:
   sort: asc
   use: github
@@ -47,11 +52,3 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-
-dockers:
-  - id: subshells
-    goos: linux
-    goarch: amd64
-    dockerfile: Dockerfile.release
-    image_templates:
-    - ghcr.io/kakkoyun/subshells:{{ .Tag }}
