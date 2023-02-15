@@ -10,7 +10,7 @@ metadata:
   name: subshells
   namespace: default
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app.kubernetes.io/component: workload
@@ -33,7 +33,7 @@ spec:
           - /bin/subshells
           - --address=:8080
           - --log-level=info
-        image: ghcr.io/kakkoyun/subshells:v0.1.1
+        image: ghcr.io/kakkoyun/subshells:v0.1.2
         livenessProbe:
           httpGet:
             host: localhost
@@ -48,11 +48,6 @@ spec:
           initialDelaySeconds: 10
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
-      nodeSelector:
-        kubernetes.io/os: linux
-      securityContext:
-        fsGroup: 65534
-        runAsUser: 65534
       serviceAccountName: subshells
       terminationGracePeriodSeconds: 120
 ---
@@ -63,8 +58,8 @@ metadata:
     app.kubernetes.io/component: workload
     app.kubernetes.io/instance: subshells
     app.kubernetes.io/name: subshells
-  name: parca
-  namespace: parca
+  name: default
+  namespace: default
 spec:
   ports:
   - name: http

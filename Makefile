@@ -45,3 +45,11 @@ push-container: container
 .PHONY: release-dry-run
 release-dry-run:
 	goreleaser release --rm-dist --auto-snapshot --skip-validate --skip-publish --debug --skip-sign
+
+.PHONY: dev/up
+dev/up:
+	source ./local-dev.sh && up
+
+.PHONY: dev/down
+dev/down:
+	source ./local-dev.sh && down
