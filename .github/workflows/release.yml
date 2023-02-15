@@ -41,7 +41,7 @@ jobs:
          version: latest
          args: release --rm-dist
        env:
-         GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+         GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }} # GITHUB_TOKEN
 
   container:
     name: Container build and push

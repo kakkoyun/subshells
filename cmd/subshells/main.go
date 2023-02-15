@@ -13,6 +13,7 @@ import (
 	"github.com/metalmatze/signal/internalserver"
 	"github.com/oklog/run"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 
 	"github.com/kakkoyun/subshells/pkg/logger"
 )
@@ -43,9 +44,9 @@ func main() {
 
 	registry := prometheus.NewRegistry()
 	registry.MustRegister(
-		prometheus.NewBuildInfoCollector(),
-		prometheus.NewGoCollector(),
-		prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}),
+		collectors.NewBuildInfoCollector(),
+		collectors.NewGoCollector(),
+		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
 	)
 	healthchecks := healthcheck.NewMetricsHandler(healthcheck.NewHandler(), registry)
 	h := internalserver.NewHandler(

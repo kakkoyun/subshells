@@ -23,7 +23,12 @@ deps: go.mod
 	go mod tidy
 
 .PHONY: format
+format:
 	go fmt `go list ./...`
+
+.PHONY: lint
+lint:
+	golangci-lint run
 
 .PHONY: test
 test:
