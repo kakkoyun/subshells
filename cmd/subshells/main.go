@@ -3,11 +3,14 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/alecthomas/kong"
+	"github.com/efficientgo/core/runutil"
 	"github.com/go-kit/log/level"
 	"github.com/metalmatze/signal/healthcheck"
 	"github.com/metalmatze/signal/internalserver"
@@ -26,8 +29,9 @@ var (
 )
 
 type Flags struct {
-	LogLevel string `default:"info" enum:"error,warn,info,debug" help:"log level."`
-	Address  string `default:":8080" help:"Address string for internal server"`
+	LogLevel string        `default:"info" enum:"error,warn,info,debug" help:"log level."`
+	Address  string        `default:":8080" help:"Address string for internal server"`
+	Interval time.Duration `default:"1s" help:"Interval between each shell execution"`
 }
 
 func main() {
@@ -66,12 +70,21 @@ func main() {
 	defer cancel()
 
 	g.Add(func() error {
-		level.Info(logger).Log("msg", "starting the shell")
-		if err := runShell("./bin/infiniteloop"); err != nil {
-			return err
-		}
-		return nil
-	}, func(err error) {
+		level.Info(logger).Log("msg", "running the loop in a shell")
+		repeatInterval := flags.Interval
+		return runutil.Repeat(repeatInterval, ctx.Done(), func() error {
+			level.Info(logger).Log("msg", "new shell")
+
+			ctx, cancel := context.WithTimeout(ctx, repeatInterval-(10*time.Millisecond))
+			defer cancel()
+
+			if err := runShell(ctx, fmt.Sprintf("./bin/infiniteloop --log-level=%s", flags.LogLevel)); err != nil {
+				level.Debug(logger).Log("msg", "shell failed", "err", err)
+			}
+			level.Info(logger).Log("msg", "shell finished")
+			return nil
+		})
+	}, func(_ error) {
 		cancel()
 	})
 
@@ -95,8 +108,8 @@ func main() {
 	level.Info(logger).Log("msg", "exited")
 }
 
-func runShell(command string) error {
-	cmd := exec.Command("sh", "-c", command)
+func runShell(ctx context.Context, command string) error {
+	cmd := exec.CommandContext(ctx, "sh", "-c", command)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

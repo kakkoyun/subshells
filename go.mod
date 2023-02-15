@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/alecthomas/kong v0.7.1
+	github.com/efficientgo/core v1.0.0-rc.2
 	github.com/go-kit/log v0.2.1
 	github.com/metalmatze/signal v0.0.0-20210307161603-1c9aa721a97a
 	github.com/oklog/run v1.1.0
