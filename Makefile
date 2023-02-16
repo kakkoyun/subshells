@@ -1,4 +1,15 @@
-VERSION ?= $(shell git describe --exact-match --tags $$(git log -n1 --pretty='%h') 2>/dev/null || echo "$$(git rev-parse --abbrev-ref HEAD)-$$(git rev-parse --short HEAD)")
+ifeq ($(GITHUB_BRANCH_NAME),)
+	BRANCH := $(shell git rev-parse --abbrev-ref HEAD)-
+else
+	BRANCH := $(GITHUB_BRANCH_NAME)-
+endif
+ifeq ($(GITHUB_SHA),)
+	COMMIT := $(shell git describe --no-match --dirty --always --abbrev=8)
+else
+	COMMIT := $(shell echo $(GITHUB_SHA) | cut -c1-8)
+endif
+VERSION ?= $(if $(RELEASE_TAG),$(RELEASE_TAG),$(shell git describe --tags || echo '$(subst /,-,$(BRANCH))$(COMMIT)'))
+
 CONTAINER_IMAGE := ghcr.io/kakkoyun/subshells:$(VERSION)
 
 LDFLAGS="-X main.version=$(VERSION)"

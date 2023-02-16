@@ -1,7 +1,10 @@
+# TODO: This file is not used. I need to figure out how to fix authentication problems with goreleaser on GitHub actions.
 FROM alpine:3.17
 USER nobody
 
 COPY --chown=0:0 subshells /bin/subshells
 COPY --chown=0:0 infiniteloop /bin/infiniteloop
+COPY --chown=0:0 entrypoint.sh /bin/entrypoint.sh
 
+ENTRYPOINT ["sh", "-c", "/bin/entrypoint.sh"]
 CMD ["/bin/subshells"]

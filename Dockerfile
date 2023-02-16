@@ -22,11 +22,16 @@ RUN mkdir bin
 RUN go build -trimpath -ldflags='--X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=kakkoyun' -a -o ./bin/subshells ./cmd/subshells/main.go
 RUN go build -trimpath -ldflags='--X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=kakkoyun' -a -o ./bin/infiniteloop ./cmd/infiniteloop/main.go
 
+COPY --chown=0:0 ./entrypoint.sh /bin/entrypoint.sh
+RUN chmod +x /bin/entrypoint.sh
+
 FROM alpine:3.17
 
 USER nobody
 
 COPY --chown=0:0 --from=builder /app/bin/subshells /bin/subshells
 COPY --chown=0:0 --from=builder /app/bin/infiniteloop /bin/infiniteloop
+COPY --chown=0:0 --from=builder /bin/entrypoint.sh /bin/entrypoint.sh
 
+ENTRYPOINT ["/bin/entrypoint.sh"]
 CMD ["/bin/subshells"]
