@@ -5,6 +5,6 @@ set -xe
 
 echo "Press [CTRL+C] to stop.."
 while true; do
-    exec "$@" 2>&1 &
-    sleep 10
+    "$@" 2>&1 & sleep 10; kill $!
+    sleep 1
 done
